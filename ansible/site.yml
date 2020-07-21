@@ -1,0 +1,22 @@
+---
+#
+# This is a playbook for deployment of DigitalOcean Debian hosts.
+#
+
+# Use like (if you use secret data stored in a vault file):
+#   ansible-playbook --vault-password-file=$HOME/.vault/pass-yourproject.txt --inventory=ansible/inventories/production.yml ansible/site.yml
+# or without the vault-encrypted data:
+#   ansible-playbook --inventory=ansible/inventories/production.yml ansible/site.yml
+
+# This playbook contains the primary "plays".
+
+- name: Set up Digital Ocean Let’s Encrypt-enabled hosts
+  hosts: digitalocean_hosts
+  connection: local
+  roles:
+    - role: digitalocean_host
+
+- name: Setup Let’s Encrypt
+  hosts: nginx_letsencrypt_hosts
+  roles:
+    - role: nginx_letsencrypt_host

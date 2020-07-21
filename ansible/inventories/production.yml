@@ -1,0 +1,30 @@
+all:
+  hosts:
+  children:
+    # DigitalOcean hosts to setup
+    digitalocean_hosts:
+      hosts:
+        # Name the hosts... somehow, but this should be a unique name (so they won't be re-)
+        a1:  # this host uses all the default settings; like a2, but tags are empty.
+        a2:  # we can bind some variables/settings to a specific host
+#          digitalocean_host_tags: [a, b, c, d, e]
+      vars:  # common settings for all the hosts of the group could be put here; below the default values are listed.
+#        digitalocean_host_tags: []
+#        digitalocean_host_size: s-1vcpu-1gb
+#        digitalocean_host_region: sfo3
+#        digitalocean_host_image: debian-10-x64
+#        digitalocean_host_ipv6: no
+        ansible_user: root
+    digitalocean_discovered_hosts:
+      # No hosts should be listed here; they will be detected by DigitalOcean installation play
+      # using the "names" of the hosts listed above
+
+    # All Nginx host with Let’s Encrypt-based SSL certificates
+    # We'll install Nginx on the same hosts as DigitalOcean ones
+    nginx_letsencrypt_hosts:
+      children:
+        digitalocean_discovered_hosts:
+      vars:
+        ansible_user: root
+  vars:
+    ansible_user: deploy

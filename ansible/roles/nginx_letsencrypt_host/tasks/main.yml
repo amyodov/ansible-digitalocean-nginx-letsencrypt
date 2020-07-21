@@ -1,0 +1,7 @@
+---
+
+# Importing an extra file just for convenience, so when editing this file, it’s real name is displayed in the editor,
+# instead of too-generic main.yml.
+- include: nginx_letsencrypt_host.yml
+  tags:
+    - nginx_letsencrypt_host

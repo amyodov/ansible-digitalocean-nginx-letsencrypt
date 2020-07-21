@@ -1,0 +1,52 @@
+---
+
+# See the documentation on https://docs.ansible.com/ansible/latest/modules/digital_ocean_droplet_module.html
+
+# First, we need to learn about SSH keys stored on DigitalOcean. We will use them in the droplets.
+
+- name: Get the DigitalOcean SSH keys.
+  digital_ocean_sshkey_info:
+  register: ssh_keys_info
+
+- set_fact:
+    ssh_key_ids: []
+
+- set_fact:
+    ssh_key_ids: "{{ ssh_key_ids }} + [ '{{ item.id }}' ]"
+  loop: "{{ ssh_keys_info['data'] }}"
+
+- name: Discovered the SSH keys on DigitalOcean.
+  debug:
+    var: ssh_key_ids
+
+- name: Create a new DigitalOcean droplet.
+  digital_ocean_droplet:
+    # Main settings
+    state: present
+    name: "{{ ansible_host }}"
+    image: "{{ digitalocean_host_image }}"
+    size: "{{ digitalocean_host_size }}"
+    region: "{{ digitalocean_host_region }}"
+    ipv6: "{{ digitalocean_host_ipv6 }}"
+    # Extra settings
+    backups: "{{ digitalocean_host_backups }}"
+    monitoring: "{{ digitalocean_host_monitoring }}"
+    private_networking: "{{ digitalocean_host_private_networking }}"
+    tags: "{{ digitalocean_host_tags }}"
+    unique_name: "{{ digitalocean_host_unique_name }}"
+    # Default connection settings
+    ssh_keys: "{{ ssh_key_ids }}"
+    wait_timeout: 500
+  register: created_droplet
+
+- debug:
+    msg: "Configured DigitalOcean droplet: {{ ansible_host }}: ID is {{ created_droplet.data.droplet.id }}, IP is {{ created_droplet.data.ip_address }}"
+
+- name: Readding all the just-created droplets to the dynamic inventory as `digitalocean_discovered_hosts`.
+  loop: "{{ ansible_play_batch }}"
+  add_host:
+    name: "{{ item }}"
+    hostname: "{{ hostvars[item].created_droplet.data.ip_address }}"
+    ansible_host: "{{ hostvars[item].created_droplet.data.ip_address }}"
+    groups:
+      - digitalocean_discovered_hosts

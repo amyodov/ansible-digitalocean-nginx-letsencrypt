@@ -1,0 +1,4 @@
+---
+
+nginx_letsencrypt_host_state: latest
+nginx_letsencrypt_host_default_release: stable

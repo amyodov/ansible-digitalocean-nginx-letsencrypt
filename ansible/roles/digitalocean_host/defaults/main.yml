@@ -1,0 +1,14 @@
+---
+
+# Primary settings
+digitalocean_host_size: s-1vcpu-1gb  # interestingly it is different from just "1gb"
+  # 1gb
+digitalocean_host_region: sfo3
+digitalocean_host_image: debian-10-x64
+digitalocean_host_ipv6: no
+# Extra
+digitalocean_host_tags: []
+digitalocean_host_backups: no
+digitalocean_host_monitoring: no
+digitalocean_host_private_networking: no
+digitalocean_host_unique_name: yes # different from the default!
